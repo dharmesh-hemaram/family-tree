@@ -22,7 +22,7 @@ public interface PersonRepository extends Neo4jRepository<Person, Long> {
     /**
      * Find all ancestors of a person up to a certain depth
      */
-    @Query("MATCH (p:Person)-[:PARENT_OF*1..{depth}]->(child:Person) " +
+    @Query("MATCH (p:Person)-[:PARENT_OF*1..$depth]->(child:Person) " +
            "WHERE id(child) = $personId " +
            "RETURN p")
     List<Person> findAncestors(@Param("personId") Long personId, @Param("depth") int depth);
@@ -30,7 +30,7 @@ public interface PersonRepository extends Neo4jRepository<Person, Long> {
     /**
      * Find all descendants of a person up to a certain depth
      */
-    @Query("MATCH (p:Person)-[:PARENT_OF*1..{depth}]->(descendant:Person) " +
+    @Query("MATCH (p:Person)-[:PARENT_OF*1..$depth]->(descendant:Person) " +
            "WHERE id(p) = $personId " +
            "RETURN descendant")
     List<Person> findDescendants(@Param("personId") Long personId, @Param("depth") int depth);

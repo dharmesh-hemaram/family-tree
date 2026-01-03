@@ -127,9 +127,10 @@ public class DataInitializer {
                 personService.addParentChildRelationship(father.getId(), child2.getId());
                 personService.addParentChildRelationship(mother.getId(), child2.getId());
                 
+                int totalPersons = 6; // grandparents(2) + parents(2) + children(2)
                 log.info("Sample family tree created successfully!");
                 log.info("- Created 3 generations");
-                log.info("- Created {} persons", 6);
+                log.info("- Created {} persons", totalPersons);
                 log.info("- Established parent-child and spouse relationships");
                 
             } catch (Exception e) {

@@ -237,6 +237,12 @@ ADMIN > EDITOR > FAMILY_MEMBER > VIEWER
 5. **Restrict CORS**: Set `CORS_ALLOWED_ORIGINS` to only trusted domains
 6. **Regular Security Updates**: Keep dependencies up to date
 
+**Note on CSRF Protection**: CSRF protection is disabled in this stateless REST API because:
+- Authentication uses JWT tokens in the Authorization header (not cookies)
+- API follows stateless session management (SessionCreationPolicy.STATELESS)
+- CORS is properly configured to restrict allowed origins
+- This is a standard practice for JWT-based REST APIs
+
 ## 🧪 Testing
 
 Run the test suite:
