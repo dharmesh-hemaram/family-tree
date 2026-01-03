@@ -80,12 +80,24 @@ Family Tree is a modern, scalable platform designed to manage complex kinship st
    ```
 
 3. **Configure Application**
-   Edit `src/main/resources/application.properties`:
-   ```properties
-   spring.neo4j.uri=bolt://localhost:7687
-   spring.neo4j.authentication.username=neo4j
-   spring.neo4j.authentication.password=password
+   
+   Copy the example environment file:
+   ```bash
+   cp .env.example .env
    ```
+   
+   Edit `.env` and set your configuration:
+   ```bash
+   # Neo4j credentials
+   NEO4J_URI=bolt://localhost:7687
+   NEO4J_USERNAME=neo4j
+   NEO4J_PASSWORD=your-secure-password
+   
+   # JWT secret (generate with: openssl rand -base64 64)
+   JWT_SECRET=your-jwt-secret-key
+   ```
+   
+   Or update `src/main/resources/application.properties` directly.
 
 4. **Build the Application**
    ```bash
@@ -202,6 +214,28 @@ ADMIN > EDITOR > FAMILY_MEMBER > VIEWER
 2. JWT token issued
 3. Token included in subsequent requests
 4. Role-based authorization on each endpoint
+
+### Production Security Recommendations
+
+**IMPORTANT**: The default configuration uses placeholder values that are NOT secure for production:
+
+1. **Change Neo4j Password**: Use a strong password, not the default "password"
+   ```bash
+   export NEO4J_PASSWORD="$(openssl rand -base64 32)"
+   ```
+
+2. **Generate Strong JWT Secret**: Never use the default secret in production
+   ```bash
+   export JWT_SECRET="$(openssl rand -base64 64)"
+   ```
+
+3. **Use Environment Variables**: All sensitive configuration should come from environment variables
+   - Copy `.env.example` to `.env` and set secure values
+   - Never commit `.env` to version control
+
+4. **Enable HTTPS**: In production, always use HTTPS/TLS
+5. **Restrict CORS**: Set `CORS_ALLOWED_ORIGINS` to only trusted domains
+6. **Regular Security Updates**: Keep dependencies up to date
 
 ## 🧪 Testing
 

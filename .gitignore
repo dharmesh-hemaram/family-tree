@@ -56,3 +56,7 @@ neo4j/
 
 # Application
 application-local.properties
+
+# Environment variables
+.env
+.env.local
