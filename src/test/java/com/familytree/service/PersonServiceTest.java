@@ -114,17 +114,25 @@ class PersonServiceTest {
     void testAddParentChildRelationship_Success() {
         Person parent = Person.builder()
             .id(1L)
+            .firstName("Parent")
+            .lastName("Doe")
             .children(new HashSet<>())
+            .parents(new HashSet<>())
+            .spouses(new HashSet<>())
             .build();
         
         Person child = Person.builder()
             .id(2L)
+            .firstName("Child")
+            .lastName("Doe")
+            .children(new HashSet<>())
             .parents(new HashSet<>())
+            .spouses(new HashSet<>())
             .build();
         
         when(personRepository.findById(1L)).thenReturn(Optional.of(parent));
         when(personRepository.findById(2L)).thenReturn(Optional.of(child));
-        when(personRepository.save(any(Person.class))).thenReturn(parent);
+        when(personRepository.save(any(Person.class))).thenAnswer(invocation -> invocation.getArgument(0));
         
         personService.addParentChildRelationship(1L, 2L);
         

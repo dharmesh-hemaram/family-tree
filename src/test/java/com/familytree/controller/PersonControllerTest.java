@@ -1,5 +1,6 @@
 package com.familytree.controller;
 
+import com.familytree.config.TestSecurityConfig;
 import com.familytree.dto.PersonDTO;
 import com.familytree.model.Person;
 import com.familytree.service.PersonService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(PersonController.class)
 @AutoConfigureMockMvc
+@Import(TestSecurityConfig.class)
 class PersonControllerTest {
     
     @Autowired
