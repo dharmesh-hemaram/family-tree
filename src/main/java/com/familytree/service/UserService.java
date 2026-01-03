@@ -1,5 +1,7 @@
 package com.familytree.service;
 
+import com.familytree.exception.ResourceAlreadyExistsException;
+import com.familytree.exception.ResourceNotFoundException;
 import com.familytree.model.User;
 import com.familytree.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,10 +37,10 @@ public class UserService {
     @Transactional
     public User createUser(String username, String email, String password, Set<String> roles) {
         if (userRepository.existsByUsername(username)) {
-            throw new RuntimeException("Username already exists");
+            throw new ResourceAlreadyExistsException("User", username);
         }
         if (userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Email already exists");
+            throw new ResourceAlreadyExistsException("User with email", email);
         }
         
         User user = User.builder()
@@ -56,7 +58,7 @@ public class UserService {
     @Transactional
     public void updateLastLogin(String username) {
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User with username: " + username));
         user.setLastLoginAt(LocalDateTime.now());
         userRepository.save(user);
     }
@@ -64,7 +66,7 @@ public class UserService {
     @Transactional
     public void addRole(Long userId, String role) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User", userId));
         user.getRoles().add(role);
         userRepository.save(user);
     }
@@ -72,7 +74,7 @@ public class UserService {
     @Transactional
     public void removeRole(Long userId, String role) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User", userId));
         user.getRoles().remove(role);
         userRepository.save(user);
     }

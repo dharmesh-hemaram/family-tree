@@ -2,6 +2,8 @@ package com.familytree.service;
 
 import com.familytree.dto.LineageDTO;
 import com.familytree.dto.PersonDTO;
+import com.familytree.exception.InvalidRelationshipException;
+import com.familytree.exception.ResourceNotFoundException;
 import com.familytree.model.Person;
 import com.familytree.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +66,7 @@ public class PersonService {
     @Transactional
     public Person updatePerson(Long id, PersonDTO dto) {
         Person person = personRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Person not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Person", id));
         
         person.setFirstName(dto.getFirstName());
         person.setMiddleName(dto.getMiddleName());
@@ -93,10 +95,26 @@ public class PersonService {
     
     @Transactional
     public void addParentChildRelationship(Long parentId, Long childId) {
+        // Prevent self-relationship
+        if (parentId.equals(childId)) {
+            throw new InvalidRelationshipException("A person cannot be their own parent");
+        }
+        
         Person parent = personRepository.findById(parentId)
-            .orElseThrow(() -> new RuntimeException("Parent not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Parent", parentId));
         Person child = personRepository.findById(childId)
-            .orElseThrow(() -> new RuntimeException("Child not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Child", childId));
+        
+        // Check if relationship already exists
+        if (parent.getChildren().contains(child)) {
+            throw new InvalidRelationshipException("Parent-child relationship already exists");
+        }
+        
+        // Check for circular relationships (child cannot be an ancestor of parent)
+        List<Person> childAncestors = personRepository.findAncestors(childId, 100);
+        if (childAncestors.stream().anyMatch(a -> a.getId().equals(parentId))) {
+            throw new InvalidRelationshipException("Cannot create circular relationship: child is already an ancestor of parent");
+        }
         
         parent.getChildren().add(child);
         child.getParents().add(parent);
@@ -107,10 +125,20 @@ public class PersonService {
     
     @Transactional
     public void addSpouseRelationship(Long person1Id, Long person2Id) {
+        // Prevent self-relationship
+        if (person1Id.equals(person2Id)) {
+            throw new InvalidRelationshipException("A person cannot be their own spouse");
+        }
+        
         Person person1 = personRepository.findById(person1Id)
-            .orElseThrow(() -> new RuntimeException("Person 1 not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Person", person1Id));
         Person person2 = personRepository.findById(person2Id)
-            .orElseThrow(() -> new RuntimeException("Person 2 not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Person", person2Id));
+        
+        // Check if relationship already exists
+        if (person1.getSpouses().contains(person2)) {
+            throw new InvalidRelationshipException("Spouse relationship already exists");
+        }
         
         person1.getSpouses().add(person2);
         person2.getSpouses().add(person1);
@@ -122,7 +150,7 @@ public class PersonService {
     @Transactional(readOnly = true)
     public LineageDTO getLineage(Long personId, int ancestorDepth, int descendantDepth) {
         Person person = personRepository.findById(personId)
-            .orElseThrow(() -> new RuntimeException("Person not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Person", personId));
         
         List<Person> ancestors = personRepository.findAncestors(personId, ancestorDepth);
         List<Person> descendants = personRepository.findDescendants(personId, descendantDepth);
