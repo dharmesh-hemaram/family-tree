@@ -4,6 +4,24 @@
 
 Family Tree is a modern, scalable platform designed to manage complex kinship structures, historical location tracking, advanced ancestor discovery, and role-based access control. Built with a graph database at its core, Family Tree treats ancestry as what it truly is—a graph, not a table.
 
+## 📦 Project Structure
+
+This repository contains two main components:
+
+### Backend (Java/Spring Boot + Neo4j)
+The backend provides a RESTful API for managing family tree data with a graph database.
+- See the sections below for backend setup and documentation
+
+### Frontend (React + TypeScript + Supabase)
+A modern web application for managing family trees with authentication and database connectivity.
+- **Quick Start**: See [`frontend/README.md`](frontend/README.md)
+- **Setup Guide**: See [`frontend/SETUP.md`](frontend/SETUP.md) for detailed instructions
+- **Features**:
+  - Login/Signup with Supabase authentication
+  - Dashboard to view and navigate family relationships
+  - Add/Edit persons and define parent-child relationships
+  - User-specific data with Row Level Security
+
 ## 🌟 Features
 
 ### Core Capabilities
@@ -39,13 +57,20 @@ Family Tree is a modern, scalable platform designed to manage complex kinship st
 
 ## 🏗️ Architecture
 
-### Technology Stack
+### Backend Technology Stack
 - **Backend**: Spring Boot 3.2
 - **Database**: Neo4j (Graph Database)
 - **Security**: Spring Security with JWT
 - **API**: RESTful endpoints
 - **Build Tool**: Maven
 - **Language**: Java 17
+
+### Frontend Technology Stack
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Routing**: React Router v6
+- **Backend**: Supabase (PostgreSQL + Auth)
+- **Styling**: Inline CSS (simple and minimal)
 
 ### Design Principles
 1. **Graph-First**: All relationships are first-class citizens
